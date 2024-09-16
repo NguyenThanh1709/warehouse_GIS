@@ -9,8 +9,6 @@ $data = array(
   'activeMoudule' => 'active'
 );
 
-// showDataArr($_SESSION['cart']);
-
 layout('header', $data); //Header
 layout('sidebar', $data); //Sidebar
 
@@ -70,22 +68,37 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
       'id_employee' => $user_id
     );
 
+    //Nếu note được nhập
     if (!empty($body['note'])) {
       $data['note'] = $body['note'];
     }
-    // showDataArr($data);
-    // die();
+
     $insertStatus = insert('tbl_xuathang', $data);
+
+    //Nếu insert thành thông
     if ($insertStatus) {
       $id_export = insertID();
       foreach ($listCartProduct as $item) {
+        //Insert vào bảng chi tiết xuất hàng
         $data = array(
           'id_export' => $id_export,
           'id_product' => $item['id'],
           'quantity' => $item['qty'],
           'sub_total' => $item['sub_total']
         );
+
         $insert = insert('tbl_chitiet_xuathang', $data);
+
+        //Lấy số lượng sản phẩm của kho hàng
+        $checkQty = firstRaw("SELECT `quantity` FROM `tbl_kho_sanpham` WHERE `id_warehouse` = $body[warehouse] AND `id_product` = $item[id]");
+
+        //Cập nhật lại số lượng
+        $qty_new = $checkQty['quantity'] - $item['qty'];
+
+        if (!empty($checkQty)) {
+          //Thì cập nhật lại số lượng
+          update('tbl_kho_sanpham', ['quantity' => $qty_new], "`id_warehouse` = $body[warehouse] AND `id_product` = $item[id]");
+        }
       }
       $_SESSION['msg'] = "Đã tạo đơn hàng xuất thành công!";
       $_SESSION['msg_style'] = "success";
@@ -100,6 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
   }
 }
 
+//Set thông báp
 $old_data = $_SESSION['old_data'] ?? ['code' => "CODE$timeCurrent"];
 ?>
 <div id="wp-content">
@@ -139,11 +153,10 @@ $old_data = $_SESSION['old_data'] ?? ['code' => "CODE$timeCurrent"];
                   <label for="paid" class="m-1">Đã thanh toán</label>
                 </div>
               </div>
-
             </div>
             <div class="col-6 form-group">
               <label for="phone">Kho hàng (*)</label>
-              <select name="warehouse" id="" class="form-control">
+              <select name="warehouse" id="" class="form-control warehouse-select">
                 <option value="0">----Chọn Kho hàng ----</option>
                 <?php foreach ($listWarehouse as $item): ?>
                   <option <?php echo (!empty(old('warehouse', $old_data)) && old('warehouse', $old_data) == $item['id']) ? 'selected' : null ?> value="<?php echo $item['id'] ?>"><?php echo $item['name'] ?></option>
@@ -231,7 +244,7 @@ $old_data = $_SESSION['old_data'] ?? ['code' => "CODE$timeCurrent"];
 
         <div class="modal-body">
           <div class="input-group">
-            <input type="text" class="form-control" id="keyword_text" placeholder="xuất từ khoá tìm kiếm...." aria-label="xuất từ khoá tìm kiếm...." aria-describedby="basic-addon1" fdprocessedid="g2y3i8">
+            <input type="text" class="form-control" id="keyword_text" placeholder="Nhập từ khoá tìm kiếm...." aria-label="Nhập từ khoá tìm kiếm...." aria-describedby="basic-addon1" fdprocessedid="g2y3i8">
             <span class="input-group-text btn-search" id="basic-addon1">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel-fill" viewBox="0 0 16 16">
                 <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z" />

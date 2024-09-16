@@ -3,7 +3,17 @@
 if (isset($_POST['keyword'])) {
   $keyword = $_POST['keyword'];
   $module = $_POST['module'] . '_price';
-  $listProduct = getRaw("SELECT * FROM `tbl_sanpham` WHERE `name` LIKE '%$keyword%'");
+  $id_warehouse = $_POST['id_warehouse'];
+  if ($module == 'import_price') {
+    $listProduct = getRaw("SELECT * FROM `tbl_sanpham` WHERE `name` LIKE '%$keyword%'");
+  } else {
+    $listProduct = getRaw("SELECT `tbl_kho_sanpham`.id_product as id, `tbl_kho_sanpham`.id_warehouse, `tbL_kho_sanpham`.quantity, `tbl_sanpham`.`thumbnail`, `tbl_sanpham`.name, `tbl_sanpham`.unit, `tbl_sanpham`.export_price 
+    FROM `tbl_kho_sanpham` 
+    INNER JOIN `tbl_sanpham` ON `tbl_sanpham`.id = `tbl_kho_sanpham`.`id_product` 
+    WHERE `tbl_kho_sanpham`.id_warehouse = '$id_warehouse' AND `tbl_sanpham`.name LIKE '%$keyword%'");
+  }
+  // echo json_encode($listProduct);
+  // die();
   if (!empty($listProduct)) {
     $strHTML = '';
     $temp = 0;
@@ -13,7 +23,7 @@ if (isset($_POST['keyword'])) {
       $strHTML .= '<td><img src="' . (!empty($item['thumbnail']) ? $item['thumbnail'] : "http://via.placeholder.com/80X80") . '" width="80px" height="80px" alt=""></td>';
       $strHTML .= '<td><a href="#">' . $item['name'] . '</a></td>';
       $strHTML .= '<td>' . number_format($item[$module], 0, '', ',') . 'đ / ' . $item['unit'] . '</td>';
-      $strHTML .= '<td><input type="number" class="form-control" min="1" value="1" id="qty-' . $item['id'] . '"></td>';
+      $strHTML .= '<td><span class="text-info text-center">Max: ' . $item['quantity'] . '</span><input type="number" class="form-control" min="1" max="' . $item['quantity'] . '" value="1" id="qty-' . $item['id'] . '"></td>';
       $strHTML .= '<td class="text-center">';
       $strHTML .= '<button type="button" class="btn btn-sm text-center text-success btn-add-cart" data-id="' . $item['id'] . '">';
       $strHTML .= '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart-plus" viewBox="0 0 16 16">';

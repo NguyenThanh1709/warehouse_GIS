@@ -15,8 +15,8 @@ layout('sidebar', $data); //Sidebar
 //Danh sách kho hàng
 $listWarehouse = getRaw("SELECT * FROM `tbl_khohang`");
 
-//Danh sách nhà cung cấp
-$listSupplier = getRaw("SELECT * FROM `tbl_khachhang`");
+//Danh sách khách hàng
+$listCustomer = getRaw("SELECT * FROM `tbl_khachhang`");
 
 //Xử lý cập nhật tác vụ xử lý
 $errors = array();
@@ -126,9 +126,9 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 }
 
 $listExport = getRaw("SELECT `tbl_xuathang`.*, `tbl_khachhang`.name as name_customer, `tbl_khohang`.name as name_warehouse, `tbl_users`.fullname as name_employee 
-FROM `tbl_xuathang` INNER JOIN `tbl_khachhang` 
-ON `tbl_xuathang`.id_employee = `tbl_khachhang`.id 
+FROM `tbl_xuathang`
 INNER JOIN `tbl_users` ON `tbl_xuathang`.id_employee = `tbl_users`.id 
+INNER JOIN `tbl_khachhang` ON `tbl_xuathang`.id_customer = `tbl_khachhang`.id 
 INNER JOIN `tbl_khohang` ON `tbl_xuathang`.id_warehouse = `tbl_khohang`.id $filter LIMIT $offset, $perPage");
 
 //Đếm trạng thái
@@ -164,7 +164,7 @@ $msg_style = $_SESSION['msg_style'] ?? '';
             <select name="customer" id="" class="form-control btn-sm">
               <option value="">---Chọn khách hàng---</option>
               <option value="">---Tất cả---</option>
-              <?php foreach ($listSupplier as $item) : ?>
+              <?php foreach ($listCustomer as $item) : ?>
                 <option <?php echo (!empty($customer) && $customer == $item['id']) ? 'selected' : null ?> value="<?php echo $item['id'] ?>"><?php echo $item['name'] ?></option>
               <?php endforeach ?>
             </select>
@@ -190,7 +190,7 @@ $msg_style = $_SESSION['msg_style'] ?? '';
                 </th>
                 <th scope="col">#</th>
                 <th scope="col">Mã đơn xuất</th>
-                <th scope="col">Nhà cung cấp</th>
+                <th scope="col">Khách hàng</th>
                 <th scope="col">Kho hàng</th>
                 <th scope="col">Giá trị</th>
                 <th scope="col">Ngày xuất hàng</th>
@@ -199,7 +199,7 @@ $msg_style = $_SESSION['msg_style'] ?? '';
             </thead>
             <tbody>
               <?php
-              if (!empty($listExport) > 0) :
+              if (!empty($listExport)) :
                 $temp = $page;
                 foreach ($listExport as $item) :
               ?>

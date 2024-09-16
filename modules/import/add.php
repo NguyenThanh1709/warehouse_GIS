@@ -71,19 +71,40 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     if (!empty($body['note'])) {
       $data['note'] = $body['note'];
     }
-    // showDataArr($data);
-    // die();
+
     $insertStatus = insert('tbl_nhaphang', $data);
     if ($insertStatus) {
       $id_import = insertID();
       foreach ($listCartProduct as $item) {
+        //Dữ liệu thêm
         $data = array(
           'id_import' => $id_import,
           'id_product' => $item['id'],
           'quantity' => $item['qty'],
           'sub_total' => $item['sub_total']
         );
-        $insert = insert('tbl_chitiet_nhaphang', $data);
+        //Insert sản phẩm nhập vào bảng chi tiết đơn hàng
+        insert('tbl_chitiet_nhaphang', $data);
+
+        //Lấy số lượng sản phẩm của kho hàng
+        $checkQty = firstRaw("SELECT `quantity` FROM `tbl_kho_sanpham` WHERE `id_warehouse` = $body[warehouse] AND `id_product` = $item[id]");
+
+        //Cập nhật lại số lượng
+        $qty_new = $checkQty['quantity'] + $item['qty'];
+
+        //Nếu có dữ liệu, sản phẩm này trong kho đã tồn tại
+        if (!empty($checkQty)) {
+          //Thì cập nhật lại số lượng
+          update('tbl_kho_sanpham', ['quantity' => $qty_new], "`id_warehouse` = $body[warehouse] AND `id_product` = $item[id]");
+        } else {
+          //Ngược lại thêm dữ liệu mới
+          $dataInsert = array(
+            'id_warehouse' => $body['warehouse'],
+            'id_product' => $item['id'],
+            'quantity' => $qty_new
+          );
+          insert('tbl_kho_sanpham', $dataInsert);
+        }
       }
       $_SESSION['msg'] = "Đã tạo đơn hàng thành công!";
       $_SESSION['msg_style'] = "success";

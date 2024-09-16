@@ -12,13 +12,11 @@ $data = array(
 layout('header', $data); //Header
 layout('sidebar', $data); //Sidebar
 
-$id = "";
-
 $id = $_GET['id'];
 //Láy thông tin đơn hàng xuất bảng nhaphang
 $exportDetail = firstRaw("SELECT `tbl_xuathang`.*, `tbl_khachhang`.name as name_customer, `tbl_khohang`.name as name_warehouse, `tbl_users`.fullname as name_employee
                             FROM `tbl_xuathang` 
-                            INNER JOIN `tbl_khachhang` ON `tbl_xuathang`.id_employee = `tbl_khachhang`.id 
+                            INNER JOIN `tbl_khachhang` ON `tbl_xuathang`.id_customer = `tbl_khachhang`.id 
                             INNER JOIN `tbl_khohang` ON `tbl_xuathang`.id_warehouse = `tbl_khohang`.id
                             INNER JOIN `tbl_users` ON `tbl_xuathang`.id_employee = `tbl_users`.id WHERE `tbl_xuathang`.id = '$id'");
 //Lấy thông tin sản phẩm đơn hàng xuất bảng chitiet_nhaphang

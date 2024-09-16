@@ -17,15 +17,23 @@ $id = $_GET['id'];
 $warehouseDetail = firstRaw("SELECT * FROM `tbl_khohang` WHERE `id` = '$id'");
 
 //Lấy thông tin sản phẩm
-$listDetailProduct = getRaw("SELECT `tbl_sanpham`.thumbnail,`tbl_sanpham`.name, `tbl_chitiet_nhaphang`.id_product,
-SUM(`tbl_chitiet_nhaphang`.quantity) AS total_quantity, SUM(`tbl_chitiet_nhaphang`.sub_total) AS total_sub_total 
-FROM `tbl_chitiet_nhaphang` INNER JOIN `tbl_nhaphang` ON `tbl_chitiet_nhaphang`.id_import = `tbl_nhaphang`.id 
-INNER JOIN tbl_sanpham ON `tbl_chitiet_nhaphang`.id_product = `tbl_sanpham`.id 
-WHERE `tbl_nhaphang`.id_warehouse = '$id'
-GROUP BY `tbl_chitiet_nhaphang`.id_product");
+// $listDetailProduct = getRaw("SELECT `tbl_sanpham`.thumbnail,`tbl_sanpham`.name, `tbl_chitiet_nhaphang`.id_product,
+// SUM(`tbl_chitiet_nhaphang`.quantity) AS total_quantity, SUM(`tbl_chitiet_nhaphang`.sub_total) AS total_sub_total
+// FROM `tbl_chitiet_nhaphang` 
+// INNER JOIN `tbl_nhaphang` ON `tbl_chitiet_nhaphang`.id_import = `tbl_nhaphang`.id 
+// INNER JOIN tbl_sanpham ON `tbl_chitiet_nhaphang`.id_product = `tbl_sanpham`.id 
+// WHERE `tbl_nhaphang`.id_warehouse = '$id'
+// GROUP BY `tbl_chitiet_nhaphang`.id_product");
 
-// showDataArr($listDetailProduct);
+$listDetailProduct = getRaw("SELECT `tbl_kho_sanpham`.*, `tbl_sanpham`.name as name_product, `tbl_sanpham`.thumbnail, `tbl_khohang`.name as name_warehouse
+FROM `tbl_kho_sanpham` 
+INNER JOIN `tbl_sanpham` ON `tbl_sanpham`.id = `tbl_kho_sanpham`.id_product
+INNER JOIN `tbl_khohang` ON `tbl_khohang`.id = `tbl_kho_sanpham`.id_warehouse 
+WHERE `tbl_kho_sanpham`.id_warehouse = '$id'");
+
 ?>
+
+<!-- Giao diện html -->
 <div id="wp-content">
   <div id="content" class="container-fluid">
     <div class="card">
@@ -89,24 +97,20 @@ GROUP BY `tbl_chitiet_nhaphang`.id_product");
               <th scope="col" width="5%">#</th>
               <th scope="col" width="12%">Hình ảnh</th>
               <th scope="col" width="30%">Tên sản phẩm</th>
-              <th scope="col" width="20%">Số lượng đã nhập</th>
-              <th scope="col" width="15%%">Tổng tiền</th>
+              <th scope="col" width="20%">Số lượng trong kho</th>
+              <!-- <th scope="col" width="20%">Nhập hàng</th> -->
             </tr>
           </thead>
           <tbody class="list-product-cart">
             <?php
             $temp = 0;
-            $total = 0;
-            foreach ($listDetailProduct as $item) :
-              $total = $total + $item['total_sub_total'];
+            foreach ($listDetailProduct as $item) :              
             ?>
               <tr>
                 <td><strong><?php echo ++$temp ?></strong></td>
                 <td class="text-center"><img src="<?php echo $item['thumbnail'] ?>" width="80px" height="80px" alt=""></td>
-                <td><a href="#"><?php echo $item['name'] ?></a></td>
-                <td><span><?php echo $item['total_quantity'] ?></span></td>
-                <td><span><?php echo number_format($item['total_sub_total'], 0, '', ',') . 'đ' ?></span></td>
-                <!-- <td></td> -->
+                <td><a href="#"><?php echo $item['name_product'] ?></a></td>
+                <td><span><?php echo $item['quantity'] ?></span></td>
               </tr>
             <?php endforeach; ?>
 
@@ -114,12 +118,11 @@ GROUP BY `tbl_chitiet_nhaphang`.id_product");
           <tfoot>
             <tr>
               <td colspan="6" class="text-right">
-                </a><br>Tổng đơn nhập: <strong id="total"><?php echo number_format($total, 0, '',',') . 'đ' ?></strong>
               </td>
             </tr>
           </tfoot>
         </table>
-        <a href="?module=import" class="btn btn-danger">Quay lại</a>
+        <a href="?module=dashboard" class="btn btn-danger">Quay lại</a>
       </div>
     </div>
   </div>

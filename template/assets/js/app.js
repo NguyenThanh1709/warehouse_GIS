@@ -113,13 +113,17 @@ $(document).ready(function () {
   $("#keyword_text").keyup(function () {
     var keyword = $(this).val(); // Lấy dữ liệu người dùng đang nhập
     var module = $("#exampleModal").attr("module");
+    var id_warehouse = $(".warehouse-select").val() ?? "";
+    console.log(id_warehouse);
+    var data = { keyword: keyword, module: module, id_warehouse: id_warehouse };
     $.ajax({
       url: "?module=servers&action=server", //url xử lý
       method: "POST",
-      data: { keyword: keyword, module: module },
+      data: data,
       dataType: "json",
       success: function (response) {
         //Lấy dữ liệu trả về gán vào input
+        console.log(response);
         $(".list-tr").html(response.str);
       },
     });
