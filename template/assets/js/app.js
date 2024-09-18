@@ -46,7 +46,10 @@ function initMap(warehouses) {
         "<br>" +
         "<b>Vĩ độ :</b> " +
         warehouse.longitude +
-        "</div>";
+        "</div>" +
+        "<a href='?module=dashboard&action=detail&id=" +
+        warehouse.id +
+        "' class='mt-3 btn btn-warning btn-sm'>Xem</a>";
 
       // Hiển thị nội dung chi tiết từng
       infowindow.setContent(contentString);

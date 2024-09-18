@@ -1,0 +1,16 @@
+{
+    "name": "www/warehouse_httdl",
+    "autoload": {
+        
+    },
+    "authors": [
+        {
+            "name": "Dev Nguyen"
+        }
+    ],
+    "require": {
+        "ext-gd": "*",
+        "ext-fileinfo": "*",
+        "phpoffice/phpspreadsheet": "^2.2"
+    }
+}

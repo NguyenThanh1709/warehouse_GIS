@@ -106,6 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
           insert('tbl_kho_sanpham', $dataInsert);
         }
       }
+      unset($_SESSION['old_data']);
       $_SESSION['msg'] = "Đã tạo đơn hàng thành công!";
       $_SESSION['msg_style'] = "success";
       delete_cart();

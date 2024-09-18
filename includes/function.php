@@ -119,6 +119,7 @@ function alert($msg, $msg_style)
           </div>";
     unset($_SESSION['msg']);
     unset($_SESSION['msg_style']);
+    unset($_SESSION['old_data']);
     return $str;
   }
 }

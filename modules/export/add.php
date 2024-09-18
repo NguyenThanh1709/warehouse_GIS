@@ -100,6 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
           update('tbl_kho_sanpham', ['quantity' => $qty_new], "`id_warehouse` = $body[warehouse] AND `id_product` = $item[id]");
         }
       }
+      unset($_SESSION['old_data']);
       $_SESSION['msg'] = "Đã tạo đơn hàng xuất thành công!";
       $_SESSION['msg_style'] = "success";
       delete_cart();

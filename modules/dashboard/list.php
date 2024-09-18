@@ -179,7 +179,7 @@ $msg_style = $_SESSION['msg_style'] ?? '';
                                     <td>
                                         <a class="btn btn-success btn-sm rounded-0 text-white edit-modal" type="button" id="edit-modal" data-toggle="modal" data-id="<?php echo $item['id'] ?>" data-target="#locationModal" data-placement="top" title="Edit"><i class="fa fa-edit"></i></a>
                                         <a onclick="return confirm('Bạn có chắc chắn xoá dữ liệu!')" href="?module=dashboard&action=delete&id=<?php echo $item['id'] ?>" class="btn btn-danger btn-sm rounded-0 text-white" type="button" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash"></i></a>
-                                        <a href="?module=dashboard&action=detail&id=<?php echo $item['id'] ?>" class="btn btn-info btn-sm rounded-0 text-white"><i class="fa fa-eye"></i></a>
+                                        <a title="Tồn kho" href="?module=dashboard&action=detail&id=<?php echo $item['id'] ?>" class="btn btn-info btn-sm rounded-0 text-white"><i class="fa fa-eye"></i></a>
                                     </td>
 
                                 </tr>

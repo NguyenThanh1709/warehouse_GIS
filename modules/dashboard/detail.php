@@ -17,20 +17,16 @@ $id = $_GET['id'];
 $warehouseDetail = firstRaw("SELECT * FROM `tbl_khohang` WHERE `id` = '$id'");
 
 //Lấy thông tin sản phẩm
-// $listDetailProduct = getRaw("SELECT `tbl_sanpham`.thumbnail,`tbl_sanpham`.name, `tbl_chitiet_nhaphang`.id_product,
-// SUM(`tbl_chitiet_nhaphang`.quantity) AS total_quantity, SUM(`tbl_chitiet_nhaphang`.sub_total) AS total_sub_total
-// FROM `tbl_chitiet_nhaphang` 
-// INNER JOIN `tbl_nhaphang` ON `tbl_chitiet_nhaphang`.id_import = `tbl_nhaphang`.id 
-// INNER JOIN tbl_sanpham ON `tbl_chitiet_nhaphang`.id_product = `tbl_sanpham`.id 
-// WHERE `tbl_nhaphang`.id_warehouse = '$id'
-// GROUP BY `tbl_chitiet_nhaphang`.id_product");
-
 $listDetailProduct = getRaw("SELECT `tbl_kho_sanpham`.*, `tbl_sanpham`.name as name_product, `tbl_sanpham`.thumbnail, `tbl_khohang`.name as name_warehouse
 FROM `tbl_kho_sanpham` 
 INNER JOIN `tbl_sanpham` ON `tbl_sanpham`.id = `tbl_kho_sanpham`.id_product
 INNER JOIN `tbl_khohang` ON `tbl_khohang`.id = `tbl_kho_sanpham`.id_warehouse 
 WHERE `tbl_kho_sanpham`.id_warehouse = '$id'");
 
+$_SESSION['listData'] = $listDetailProduct;
+$_SESSION['name_contact'] = $warehouseDetail['name_contact'];
+$_SESSION['name'] = $warehouseDetail['name'];
+// showDataArr($_SESSION['listData']);
 ?>
 
 <!-- Giao diện html -->
@@ -87,8 +83,15 @@ WHERE `tbl_kho_sanpham`.id_warehouse = '$id'");
       </div>
     </div>
     <div class="card">
-      <div class="card-header font-weight-bold">
+      <div class="card-header font-weight-bold d-flex justify-content-between">
         DANH SÁCH TỒN KHO
+        <a  href="?module=dashboard&action=exportExcel" type="button" class="btn btn-primary btn-sm" fdprocessedid="vc1xlr">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" style="margin-top: -3px;" height="16" fill="currentColor" class="bi bi-file-excel" viewBox="0 0 16 16">
+            <path d="M5.18 4.616a.5.5 0 0 1 .704.064L8 7.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 8l2.233 2.68a.5.5 0 0 1-.768.64L8 8.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 8 5.116 5.32a.5.5 0 0 1 .064-.704"></path>
+            <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"></path>
+          </svg>
+          Xuất Excel
+        </a>
       </div>
       <div class="card-body">
         <table class="table table-hover table-bordered mt-2">
@@ -104,7 +107,7 @@ WHERE `tbl_kho_sanpham`.id_warehouse = '$id'");
           <tbody class="list-product-cart">
             <?php
             $temp = 0;
-            foreach ($listDetailProduct as $item) :              
+            foreach ($listDetailProduct as $item) :
             ?>
               <tr>
                 <td><strong><?php echo ++$temp ?></strong></td>
