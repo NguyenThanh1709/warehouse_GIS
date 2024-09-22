@@ -12,6 +12,9 @@ $data = array(
 layout('header', $data); //Header
 layout('sidebar', $data); //Sidebar
 
+//id user đăng nhập
+$user_id = $_SESSION['user_login'];
+
 //Xử lý cập nhật tác vụ xử lý
 $errors = array();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -160,7 +163,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
   $queryString = "&$queryString";
 }
 
-$listUser = getRaw("SELECT * FROM `tbl_users` $filter AND `is_admin` != 1 LIMIT $offset, $perPage");
+$listUser = getRaw("SELECT * FROM `tbl_users` $filter AND `is_admin` != 1 AND `id`!='$user_id' LIMIT $offset, $perPage");
 
 //Đếm trạng thái 
 // 1.Đêm tất cả user ngoài trừ user admin

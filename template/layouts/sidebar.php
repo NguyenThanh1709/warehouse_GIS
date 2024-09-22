@@ -58,6 +58,14 @@
                 Nhà cung cấp
             </a>
         </li>
+        <li class="nav-link <?php activeModuleSideBar('customers') ?>">
+            <a href="?module=customers">
+                <div class="nav-link-icon d-inline-flex">
+                    <i class="far fa-folder"></i>
+                </div>
+                Khách hàng
+            </a>
+        </li>
         <li class="nav-link <?php activeModuleSideBar('users') ?>">
             <a href="?module=users">
                 <div class="nav-link-icon d-inline-flex">
